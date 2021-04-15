@@ -18,6 +18,9 @@ function makeResponsive() {
     var height = svgHeight - margin.top - margin.bottom;
     var width = svgWidth - margin.left - margin.right;
 
+    console.log("Height: ", height);
+    console.log("Width: ", width);
+
     // Create SVG container
     var svg = d3
         .select(".chart")
@@ -31,15 +34,19 @@ function makeResponsive() {
 
     // Updating and scaling for size x Axis
     var chosenXAxis = "poverty";
+
     function xScale(StateData, chosenXAxis) {
-        var xLinearScale = d3.xLinearScale()
-            .domain([d3.min(StateData, d => d[chosenXAxis]) * .08
-            .d3.max(StateData, d => d[chosenXAxis]) * 1.2
-        ])
+        var xLinearScale = d3.scaleLinear()
+            .domain([d3.min(StateData, d => d[chosenXAxis]) * .08,
+                d3.max(StateData, d => d[chosenXAxis]) * 1.2
+            ])
             .range([0, width]); 
 
     return xLinearScale;
     };
+
+    console.log("ChosenXAxis: ", chosenXAxis);
+    //console.log("xLinearScale: ", xLinearScale);
 
     // Update X axis label on click
     function renderAxis(newXScale, xAxis) {
@@ -64,7 +71,7 @@ function makeResponsive() {
     // Tooltips on circleGoup - labels
     function updateToolTip(chosenXAxis, circleGoup) {
         var label;
-        if (chosenXAxis === "Poverty") {
+        if (chosenXAxis === "poverty") {
             label = "In Poverty (%): ";
         }
         else {
@@ -72,11 +79,11 @@ function makeResponsive() {
                 label = "Age (median): ";
             }
             else (chosenXAxis === "income") 
-                label = "Household Icome (median): ";   
+                label = "Household Income (median): ";   
         };
 
         // Update tool function
-        var Tooltips = d3.tip()
+        var toolTip = d3.tip()
             .attr("class", "tooltip")
             .offset([80, -60])
             .html(function() {
@@ -95,7 +102,7 @@ function makeResponsive() {
     };
 
     // Retrieving data & Parse data
-    d3.csv("./data/data.csv").then(function(StateData, err) {
+    d3.csv("./assets/data/data.csv").then(function(StateData, err) {
         if (err) throw err;
 
         StateData.forEach(function(data) {
@@ -106,6 +113,8 @@ function makeResponsive() {
             data.smokes = +data.smokes;
             data.healthcarelow = +data.healthcarelow;
         });
+
+        console.log(StateData);
 
         var xLinearScale = xScale(StateData, chosenXAxis);
 
@@ -118,7 +127,7 @@ function makeResponsive() {
         var leftAxis = d3.axisLeft(yLinearScale);
 
         // Append x and y plus the circles
-        var xAxis = chartGroup("g")
+        var xAxis = chartGroup.append("g")
             .classed("x-axis", true)
             .attr("transform", `translate(0, ${height})`)
             .call(bottomAxis);
@@ -145,7 +154,7 @@ function makeResponsive() {
             .attr("y", 20)
             .attr("value", "poverty")
             .classed("active", true)
-            .text("Proverty (%)");
+            .text("Poverty (%)");
 
         var age = labelsGroup.append("text")
             .attr("x", 0)
@@ -153,6 +162,75 @@ function makeResponsive() {
             .attr("value", "age")
             .classed("active", true)
             .text("Age (median)");
+        
+        var income = labelsGroup.append("text")
+            .attr("x",0)
+            .attr("y", 20)
+            .attr("value", "income")
+            .classed("active", true)
+            .text(" Household Income (median)");
+
+        // Append y axis
+        chartGroup.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 - margin.left)
+            .attr("x", 0 - (height / 2))
+            .attr("dy", "lem")
+            .classed("axis-text", true)
+            .text("Obesity (%)");
+
+        var circleGoup = updateToolTip(chosenXAxis, circleGoup);
+
+        //x axis labels event listener
+        labelsGroup.selectAll("text")
+            .on("click", function() {
+                var value = d3.select(this).attr("value");
+                if (value !== chosenXAxis) {
+                    chosenXAxis = value;
+                    console.log(chosenXAxis);
+                    xLinearScale = xScale(StateData, chosenXAxis);
+                    xAxis = renderAxis(xLinearScale, xAxis);
+                    circleGoup = renderCircles(circleGoup, xLinearScale, chosenXAxis);
+                    circleGoup = updateToolTip(chosenXAxis, circleGoup);
+
+                    //Changes classes to change bold text
+                    if (chosenXAxis === "poverty") {
+                        poverty
+                            .classed("active", true)
+                            .classed("inactive", false);
+                        age
+                            .classed("active", false)
+                            .classed("inactive", true);
+                        income
+                            .classed("active", false)
+                            .classed("inactive", true);
+                    }
+                    else if (chosenXAxis === "age") {
+                        poverty
+                            .classed("active", false)
+                            .classed("inactive", true);
+                        age
+                            .classed("active", true)
+                            .classed("inactive", false);
+                        income
+                            .classed("active", false)
+                            .classed("inactive", true); 
+                        }
+                    else {
+                        poverty
+                            .classed("active", false)
+                            .classed("inactive", true);
+                        age
+                            .classed("active", false)
+                            .classed("inactive", true);
+                        income
+                            .classed("active", true)
+                            .classed("inactive", false);
+                    }
+                }
+            });
+    }).catch(function(error) {
+        console.log(error);
     });
 };
 
