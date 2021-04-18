@@ -23,33 +23,22 @@
   cursor: pointer;
 }
 
-/* font size dependent on radius, see app.js */
-.stateText {
-  font-family: sans-serif;
-  fill: #fff;
-  text-anchor: middle;
-}
-
-.stateCircle {
-  fill: #89bdd3;
-  stroke: #e3e3e3;
-}
-
 .chart {
   display: block;
   margin: 0;
 }
-
-.d3-tip {
+.tooltip {
+  position: absolute;
+  width: 140px;
+  height: 55px;
   padding: 6px;
-  font-size: 12px;
-  line-height: 1;
-  line-height: 1.5em;
-  color: #fff;
+  font: 11px sans-serif;
   text-align: center;
-  text-transform: capitalize;
-  background: rgba(0, 0, 0, 0.8);
-  border-radius: 4px;
+  color: black;
+  background: lightsteelblue;
+  border: 10px;
+  border-color: darkslategrey;
+  border-radius: 8px;
 }
 
 /* Mobile Rules */
