@@ -1,4 +1,4 @@
-// ===============Responsive Function 
+//===============Responsive Function 
 d3.select(window).on("resize", handleResize);
 
 // When the browser loads, loadChart() is called
@@ -20,7 +20,7 @@ function loadChart() {
     var svgWidth = 850;
     var margin = {
         top: 30,
-        right: 20,
+        right: 50,
         bottom: 120,
         left: 80
     };
@@ -34,7 +34,7 @@ function loadChart() {
     console.log("Width: ", width);
 
     //============Create SVG container
-    var svg = d3.select("#scatter").append("svg")
+    var svg = d3.select("#scatter2").append("svg")
         .attr("width", svgWidth)
         .attr("height", svgHeight);
 
@@ -44,31 +44,34 @@ function loadChart() {
 
     // ============================================================================
     // ===========Functions =======================================================
+   
     var chosenXAxis = "age";
-    var chosenYAxis = "resting_blood_pressure";
+    var chosenYAxis = "avg_glucose_level";
 
     // ==========xScale and yScale
-    function xScale(HeartData, chosenXAxis) {
+    function xScale(strokeData, chosenXAxis) {
         var xLinearScale = d3.scaleLinear()
-            .domain([d3.min(HeartData, d => d[chosenXAxis]),
-                d3.max(HeartData, d => d[chosenXAxis]) 
-            ])
-            .range([0, width])
-            .nice(); 
+        .domain([d3.min(strokeData, d => d[chosenXAxis]),
+            d3.max(strokeData, d => d[chosenXAxis])
+        ])
+        .range([0, width])
+        .nice();
 
         return xLinearScale;
     }
 
-    function yScale(HeartData, chosenYAxis) {
+    function yScale(strokeData, chosenYAxis) {
         var yLinearScale = d3.scaleLinear()
-        .domain([0, d3.max(HeartData, d => d[chosenYAxis])])
+        .domain([d3.max(strokeData, d => d[chosenYAxis]),
+            d3.min(strokeData, d => d[chosenYAxis])
+        ])
         .rangeRound([height, 0])
-        .nice(); 
+        .nice();
 
         return yLinearScale;
     }
 
-    // updating xAxis  and yAxis variable upon click on axis label
+    // updating xAxis and yAxis variable upon click on axis label
     function renderXAxes(newXScale, xAxis) {
         var bottomAxis = d3.axisBottom(newXScale);
   
@@ -131,16 +134,13 @@ function loadChart() {
         if (chosenXAxis === "age") {
             xlabel = "Age: ";
         }
-        else if (chosenXAxis === "cholesterol") {
-            xlabel = "Cholesterol: ";
-        }
 
         var ylabel = "";
-        if(chosenYAxis === "resting_blood_pressure") {
-            ylabel = "Resting Blood Pressure: ";
+        if(chosenYAxis === "avg_glucose_level") {
+            ylabel = "Glucose Level (avg): ";
         }
-        else if (chosenYAxis === "max_heart_rate") {
-            ylabel = "Max Heart Rate: ";
+        else if (chosenYAxis === "bmi") {
+            ylabel = "BMI: ";
         }
 
         // ==============Update tool function
@@ -165,24 +165,37 @@ function loadChart() {
 
     // =================================================================================
     // ===============Retrieving data & Parse data======================================
-    d3.csv("./assets/data/heart_clean.csv").then(function(HeartData, err) {
+    d3.csv("./assets/data/stroke_clean.csv").then(function(strokeData, err) {
         if (err) throw err;
 
-        // parse data
-        HeartData.forEach(function(data) {
+          // parse data
+        strokeData.forEach(function(data) {
             data.age = +data.age;
-            data.resting_blood_pressure = +data.resting_blood_pressure;
-            data.cholesterol = +data.cholesterol;
-            data.max_heart_rate = +data.max_heart_rate
+            data.avg_glucose_level = +data.avg_glucose_level;
+            data.bmi = +data.bmi;
         });
 
+        // ******Testing strokeData loaded******
+        console.log("strokeData: ", strokeData);
 
-        // ******Testing StateData loaded******
-        console.log("HeartData: ", HeartData);
+        // // Starting age count
+        // var sum = 0;
+        // var agegroup = [];
+        // var ages = data.age;
 
+        // // Use a for loop to iterate through the ages
+        // for (var i = 0; i < ages.length; i++) {
+        //     var ages = agegroup[i];
+        //     sum += agegroup;
+        // }
+
+        // var dropdown = d3.select("#selectButton")
+        //     .data([agegroup])
+        //         dropdown.append("option").text(agegroup).property("value");
+    
         // Repeat Linear functions from above retrieval
-        var xLinearScale = xScale(HeartData, chosenXAxis);
-        var yLinearScale = yScale(HeartData, chosenYAxis);
+        var xLinearScale = xScale(strokeData, chosenXAxis);
+        var yLinearScale = yScale(strokeData, chosenYAxis);
        
 
          // ==========Create Axis
@@ -200,7 +213,7 @@ function loadChart() {
         // ===========Circles created on chart
 
         var circleGroup = chartGroup.selectAll("g circle")
-            .data(HeartData)
+            .data(strokeData)
             .enter()
             .append("g");
         
@@ -230,32 +243,25 @@ function loadChart() {
             .attr("value", "age")
             .classed("active", true)
             .text("Age ");
-        
-        var cholesterollabel = labelsGroup.append("text")
-            .attr("x",0)
-            .attr("y", 40)
-            .attr("value", "cholesterol")
-            .classed("inactive", true)
-            .text("Cholesterol ");
 
         // Create group for three y-axis labels
         var ylabelsGroup = chartGroup.append("g");
 
-        var bloodlabel = ylabelsGroup.append("text")
+        var glucoselabel = ylabelsGroup.append("text")
             .attr("transform", "rotate(-90)")
             .attr("y", -40)
             .attr("x", 0 - (height / 2))
-            .attr("value", "resting_blood_pressure")
+            .attr("value", "avg_glucose_level")
             .classed("active", true)
-            .text("Resting Blood Pressure ");
+            .text("Glucose Level (avg) ");
         
-        var maxratelabel = ylabelsGroup.append("text")
+        var bmilabel = ylabelsGroup.append("text")
             .attr("transform", "rotate(-90)")
             .attr("y", -60)
             .attr("x", 0 - (height / 2))
-            .attr("value", "max_heart_rate")
+            .attr("value", "bmi")
             .classed("inactive", true)
-            .text("Max Heart Rate");
+            .text("BMI");
 
         var circleGroup = updateToolTip(circleGroup, chosenXAxis, chosenYAxis);
 
@@ -267,7 +273,7 @@ function loadChart() {
             chosenXAxis = value;
             }
 
-            xLinearScale = xScale(HeartData, chosenXAxis);
+            xLinearScale = xScale(strokeData, chosenXAxis);
             xAxis = renderXAxes(xLinearScale, xAxis);
             placeCircle = renderXCircles(placeCircle, xLinearScale, chosenXAxis);
             circleText = renderXText(circleText, xLinearScale, chosenXAxis);
@@ -278,19 +284,8 @@ function loadChart() {
                 agelabel
                     .classed("active", true)
                     .classed("inactive", false);
-                cholesterollabel
-                    .classed("active", false)
-                    .classed("inactive", true);
                 }
-            else {
-                agelabel
-                    .classed("active", false)
-                    .classed("inactive", true);
-                cholesterollabel
-                    .classed("active", true)
-                    .classed("inactive", false);
-                }
-        })
+            })
         // y axis labels event listener
         ylabelsGroup.selectAll("text").on("click", function() {
             var value = d3.select(this).attr("value");
@@ -299,26 +294,26 @@ function loadChart() {
                     chosenYAxis = value;
             }
 
-            yLinearScale = yScale(HeartData, chosenYAxis);
+            yLinearScale = yScale(strokeData, chosenYAxis);
             yAxis = renderYAxes(yLinearScale, yAxis);
             placeCircle = renderYCircles(placeCircle, yLinearScale, chosenYAxis);
             circleText = renderYText(circleText, yLinearScale, chosenYAxis);
             circleGroup = updateToolTip(circleGroup, chosenXAxis, chosenYAxis);
 
              //Changes classes to change bold text
-             if (chosenYAxis === "resting_blood_pressure") {
-                bloodlabel
+             if (chosenYAxis === "avg_glucose_level") {
+                glucoselabel
                     .classed("active", true)
                     .classed("inactive", false);
-                maxratelabel
+                bmilabel
                     .classed("active", false)
                     .classed("inactive", true);
                 }
             else {
-                bloodlabel
+                glucoselabel
                     .classed("active", false)
                     .classed("inactive", true);
-                maxratelabel
+                bmilabel
                     .classed("active", true)
                     .classed("inactive", false);
                 }

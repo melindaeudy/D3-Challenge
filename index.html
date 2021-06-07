@@ -3,61 +3,63 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>D3Times</title>
+  <title>Stroke and Heart Disease</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-  <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/d3Style.css">
 
 </head>
 
 <body>
   <div class="container">
+    <script type="text/javascript" src="assets/js/app.js"></script>
     <div class="row">
       <div class="col-xs-12 col-md-12">
-        <h1>D3Times</h1>
+        <h1>Heart Data </h1>
       </div>
     </div>
     <div class="row">
-      <div class="col-xs-12  col-md-9">
+      <div class="col-md-9">
         <div id="scatter">
           <!-- We append our chart here. -->
         </div>
       </div>
-    </div>
+      <div class="col-md-3">
+        <h2>Correlations Between Age, Cholestorol, Blood Pressure and Heart Rate</h2>
+        <h3> Interactive chart shows the correlation between the test subjects Age and Blood Pressure or Max Heart Rate.  
+          It also shows the correlation between Cholestorol and Blood Pressure or Heart Rate.
+        </br></br>Click on the bubble to review the related numbers.</h3>
+      </div>
+
     <div class="row">
-      <div class="col-xs-12  col-md-9">
-        <div class="article">
-          <h2>Correlations Discovered Between Health Risks and Age, Income</h2>
-          <p>The D3 enabled interactive scatterplot above allows you to click through multiple variables to compare and contrast their relationships.
-            Click each label to see the multiple combinations. Hover of the state circles for more information.</p>
-
-            <p>Some interesting insights:<br>
-            
-            There looks to be a positive correlation between the Lacks Healthcare and In Poverty. 
-            Southern states tend to have the highest rates of poverty and less healthcare coverage.
-            The age demographic is squarely within the middle age range from age 30-40.
-            </p>
-
-          <p>There is a negative correlation between Lacks Healthcare and Household Income, so wealthier states tend to have more healthcare coverage.</p>
-
-          <p>Smoking has a positive correlation with poverty, none with age, and a negative correlation with household income.
-            Obesity also has a positive correlation with poverty, none with age, and a negative correlation with household income</p>
+      <div class="col-xs-12 col-md-12">
+          <script type="text/javascript" src="assets/js/app2.js"></script>
+          <h1>Stroke Data</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-9">
+          <select id="selectButton"></select>
+          <div id="scatter2">
+          <!-- We append our chart here. -->
+        </div>
+      </div>
+      <div class="col-md-3">
+          <h2>Correlations Between Age, Glucose Level and BMI</h2>
+          <h3> Interactive chart shows the correlation between the test subjects Age and Glucose Level and Hypertension or BMI.
+          </br></br>Click on the bubble to review the related numbers.</h3>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Footer-->
-  <div id="footer">
-    <p>Melinda Ann Eudy&copy;2021</p>
-  </div>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
   <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="http://dimplejs.org/dist/dimple.v2.3.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.js"></script>
   <script type="text/javascript" src="assets/js/app.js"></script>
-
+  <script type="text/javascript" src="assets/js/app2.js"></script>
 </body>
 
 </html>
